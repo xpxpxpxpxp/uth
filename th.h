@@ -83,6 +83,15 @@ struct cd {
 #define TH_WAIT_LK      4
 #define TH_WAIT_CD      8
 
+struct evt {
+    struct lh         node;
+    struct timespec   sleep;
+    void (*func) (void *, long, long);
+    void             *arg1;
+    long              arg2;
+    long              arg3;
+};
+
 struct th {
     ctx_t               uc;
     void                *(*func)(void *);
@@ -90,10 +99,10 @@ struct th {
     int                 done;
     struct cd           done_cd;
     int                 cpu;
-    struct timespec     sleep;
+    struct evt          evt;
     struct lh           node;               /* link to ready_q or lk/cd */
-    struct lh           snode;              /* link to sleep_q */
     int                 state;
+    int                 wakeup_expired;
 };
 
 
